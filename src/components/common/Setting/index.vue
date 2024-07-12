@@ -1,9 +1,8 @@
-<script setup lang='ts'>
-import { computed, ref } from 'vue'
+<script lang="ts" setup>
 import { NModal, NTabPane, NTabs } from 'naive-ui'
-import General from './General.vue'
+import { computed, ref } from 'vue'
 import Advanced from './Advanced.vue'
-import About from './About.vue'
+import General from './General.vue'
 import { useAuthStore } from '@/store'
 import { SvgIcon } from '@/components/common'
 
@@ -38,7 +37,7 @@ const show = computed({
 <template>
   <NModal v-model:show="show" :auto-focus="false" preset="card" style="width: 95%; max-width: 640px">
     <div>
-      <NTabs v-model:value="active" type="line" animated>
+      <NTabs v-model:value="active" animated type="line">
         <NTabPane name="General" tab="General">
           <template #tab>
             <SvgIcon class="text-lg" icon="ri:file-user-line" />
@@ -56,13 +55,6 @@ const show = computed({
           <div class="min-h-[100px]">
             <Advanced />
           </div>
-        </NTabPane>
-        <NTabPane name="Config" tab="Config">
-          <template #tab>
-            <SvgIcon class="text-lg" icon="ri:list-settings-line" />
-            <span class="ml-2">{{ $t('setting.config') }}</span>
-          </template>
-          <About />
         </NTabPane>
       </NTabs>
     </div>

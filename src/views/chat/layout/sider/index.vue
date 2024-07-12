@@ -1,13 +1,13 @@
-<script setup lang='ts'>
+<script lang="ts" setup>
+import { NButton, NLayoutSider, useDialog } from 'naive-ui'
 import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
-import { NButton, NLayoutSider, useDialog } from 'naive-ui'
-import List from './List.vue'
 import Footer from './Footer.vue'
+import List from './List.vue'
 import { useAppStore, useChatStore } from '@/store'
-import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { PromptStore, SvgIcon } from '@/components/common'
 import { t } from '@/locales'
+import { useBasicLayout } from '@/hooks/useBasicLayout'
+import { PromptStore } from '@/components/common'
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
@@ -20,7 +20,11 @@ const show = ref(false)
 const collapsed = computed(() => appStore.siderCollapsed)
 
 function handleAdd() {
-  chatStore.addHistory({ title: t('chat.newChatTitle'), uuid: Date.now(), isEdit: false })
+  chatStore.addHistory({
+    title: t('chat.newChatTitle'),
+    uuid: Date.now(),
+    isEdit: false,
+  })
   if (isMobile.value)
     appStore.setSiderCollapsed(true)
 }
@@ -78,32 +82,27 @@ watch(
   <NLayoutSider
     :collapsed="collapsed"
     :collapsed-width="0"
-    :width="260"
     :show-trigger="isMobile ? false : 'arrow-circle'"
+    :style="getMobileClass"
+    :width="260"
+    bordered
     collapse-mode="transform"
     position="absolute"
-    bordered
-    :style="getMobileClass"
     @update-collapsed="handleUpdateCollapsed"
   >
-    <div class="flex flex-col h-full" :style="mobileSafeArea">
+    <div :style="mobileSafeArea" class="flex flex-col h-full">
       <main class="flex flex-col flex-1 min-h-0">
         <div class="p-4">
-          <NButton dashed block @click="handleAdd">
+          <NButton block dashed @click="handleAdd">
             {{ $t('chat.newChatButton') }}
           </NButton>
         </div>
         <div class="flex-1 min-h-0 pb-4 overflow-hidden">
           <List />
         </div>
-        <div class="flex items-center p-4 space-x-4">
-          <div class="flex-1">
-            <NButton block @click="show = true">
-              {{ $t('store.siderButton') }}
-            </NButton>
-          </div>
-          <NButton @click="handleClearAll">
-            <SvgIcon icon="ri:close-circle-line" />
+        <div class="flex items-center p-4 w-full">
+          <NButton block class="w-full" @click="handleClearAll">
+            {{ $t('store.clearChat') }}
           </NButton>
         </div>
       </main>

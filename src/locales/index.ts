@@ -7,8 +7,8 @@ import ruRU from './ru-RU'
 import viVN from './vi-VN'
 import zhCN from './zh-CN'
 import zhTW from './zh-TW'
-import { useAppStoreWithOut } from '@/store/modules/app'
 import type { Language } from '@/store/modules/app/helper'
+import { useAppStoreWithOut } from '@/store/modules/app'
 
 const appStore = useAppStoreWithOut()
 
@@ -16,7 +16,7 @@ const defaultLocale = appStore.language || 'zh-CN'
 
 const i18n = createI18n({
   locale: defaultLocale,
-  fallbackLocale: 'en-US',
+  fallbackLocale: 'zh-CN',
   allowComposition: true,
   messages: {
     'en-US': enUS,

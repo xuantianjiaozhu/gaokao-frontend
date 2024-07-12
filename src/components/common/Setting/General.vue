@@ -1,13 +1,13 @@
 <script lang="ts" setup>
+import { NButton, NInput, NPopconfirm, useMessage } from 'naive-ui'
 import { computed, ref } from 'vue'
-import { NButton, NInput, NPopconfirm, NSelect, useMessage } from 'naive-ui'
-import type { Language, Theme } from '@/store/modules/app/helper'
 import { SvgIcon } from '@/components/common'
-import { useAppStore, useUserStore } from '@/store'
-import type { UserInfo } from '@/store/modules/user/helper'
-import { getCurrentDate } from '@/utils/functions'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
+import { useAppStore, useUserStore } from '@/store'
+import type { Language, Theme } from '@/store/modules/app/helper'
+import type { UserInfo } from '@/store/modules/user/helper'
+import { getCurrentDate } from '@/utils/functions'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
@@ -54,13 +54,41 @@ const themeOptions: { label: string; key: Theme; icon: string }[] = [
 ]
 
 const languageOptions: { label: string; key: Language; value: Language }[] = [
-  { label: 'English', key: 'en-US', value: 'en-US' },
-  { label: 'Español', key: 'es-ES', value: 'es-ES' },
-  { label: '한국어', key: 'ko-KR', value: 'ko-KR' },
-  { label: 'Русский язык', key: 'ru-RU', value: 'ru-RU' },
-  { label: 'Tiếng Việt', key: 'vi-VN', value: 'vi-VN' },
-  { label: '简体中文', key: 'zh-CN', value: 'zh-CN' },
-  { label: '繁體中文', key: 'zh-TW', value: 'zh-TW' },
+  {
+    label: 'English',
+    key: 'en-US',
+    value: 'en-US',
+  },
+  {
+    label: 'Español',
+    key: 'es-ES',
+    value: 'es-ES',
+  },
+  {
+    label: '한국어',
+    key: 'ko-KR',
+    value: 'ko-KR',
+  },
+  {
+    label: 'Русский язык',
+    key: 'ru-RU',
+    value: 'ru-RU',
+  },
+  {
+    label: 'Tiếng Việt',
+    key: 'vi-VN',
+    value: 'vi-VN',
+  },
+  {
+    label: '简体中文',
+    key: 'zh-CN',
+    value: 'zh-CN',
+  },
+  {
+    label: '繁體中文',
+    key: 'zh-TW',
+    value: 'zh-TW',
+  },
 ]
 
 function updateUserInfo(options: Partial<UserInfo>) {
@@ -155,8 +183,8 @@ function handleImportButtonClick(): void {
         </NButton>
       </div>
       <div
-        class="flex items-center space-x-4"
         :class="isMobile && 'items-start'"
+        class="flex items-center space-x-4"
       >
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.chatHistory') }}</span>
 
@@ -168,7 +196,7 @@ function handleImportButtonClick(): void {
             {{ $t('common.export') }}
           </NButton>
 
-          <input id="fileInput" type="file" style="display:none" @change="importData">
+          <input id="fileInput" style="display:none" type="file" @change="importData">
           <NButton size="small" @click="handleImportButtonClick">
             <template #icon>
               <SvgIcon icon="ri:upload-2-fill" />
@@ -194,8 +222,8 @@ function handleImportButtonClick(): void {
         <div class="flex flex-wrap items-center gap-4">
           <template v-for="item of themeOptions" :key="item.key">
             <NButton
-              size="small"
               :type="item.key === theme ? 'primary' : undefined"
+              size="small"
               @click="appStore.setTheme(item.key)"
             >
               <template #icon>
@@ -203,17 +231,6 @@ function handleImportButtonClick(): void {
               </template>
             </NButton>
           </template>
-        </div>
-      </div>
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.language') }}</span>
-        <div class="flex flex-wrap items-center gap-4">
-          <NSelect
-            style="width: 140px"
-            :value="language"
-            :options="languageOptions"
-            @update-value="value => appStore.setLanguage(value)"
-          />
         </div>
       </div>
       <div class="flex items-center space-x-4">
