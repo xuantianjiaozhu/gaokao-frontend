@@ -3,7 +3,6 @@ import { ss } from '@/utils/storage'
 const LOCAL_NAME = 'userStorage'
 
 export interface UserInfo {
-  avatar: string
   name: string
   description: string
 }
@@ -15,9 +14,8 @@ export interface UserState {
 export function defaultSetting(): UserState {
   return {
     userInfo: {
-      avatar: 'https://raw.githubusercontent.com/Chanzhaoyu/chatgpt-web/main/src/assets/avatar.jpg',
       name: 'test',
-      description: '',
+      description: '省份、高考分数、位次',
     },
   }
 }

@@ -1,20 +1,20 @@
-<script setup lang='ts'>
+<script lang="ts" setup>
+import { toPng } from 'html-to-image'
+import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
+import { storeToRefs } from 'pinia'
 import type { Ref } from 'vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
-import { toPng } from 'html-to-image'
 import { Message } from './components'
-import { useScroll } from './hooks/useScroll'
-import { useChat } from './hooks/useChat'
-import { useUsingContext } from './hooks/useUsingContext'
 import HeaderComponent from './components/Header/index.vue'
-import { HoverButton, SvgIcon } from '@/components/common'
-import { useBasicLayout } from '@/hooks/useBasicLayout'
+import { useChat } from './hooks/useChat'
+import { useScroll } from './hooks/useScroll'
+import { useUsingContext } from './hooks/useUsingContext'
 import { useChatStore, usePromptStore } from '@/store'
-import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
+import { useBasicLayout } from '@/hooks/useBasicLayout'
+import { HoverButton, SvgIcon } from '@/components/common'
+import { fetchChatAPIProcess } from '@/api'
 
 let controller = new AbortController()
 
@@ -27,9 +27,21 @@ const ms = useMessage()
 const chatStore = useChatStore()
 
 const { isMobile } = useBasicLayout()
-const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat()
-const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll()
-const { usingContext, toggleUsingContext } = useUsingContext()
+const {
+  addChat,
+  updateChat,
+  updateChatSome,
+  getChatByUuidAndIndex,
+} = useChat()
+const {
+  scrollRef,
+  scrollToBottom,
+  scrollToBottomIfAtBottom,
+} = useScroll()
+const {
+  usingContext,
+  toggleUsingContext,
+} = useUsingContext()
 
 const { uuid } = route.params as { uuid: string }
 
@@ -75,7 +87,10 @@ async function onConversation() {
       inversion: true,
       error: false,
       conversationOptions: null,
-      requestOptions: { prompt: message, options: null },
+      requestOptions: {
+        prompt: message,
+        options: null,
+      },
     },
   )
   scrollToBottom()
@@ -98,7 +113,10 @@ async function onConversation() {
       inversion: false,
       error: false,
       conversationOptions: null,
-      requestOptions: { prompt: message, options: { ...options } },
+      requestOptions: {
+        prompt: message,
+        options: { ...options },
+      },
     },
   )
   scrollToBottom()
@@ -118,6 +136,7 @@ async function onConversation() {
           let chunk = responseText
           if (lastIndex !== -1)
             chunk = responseText.substring(lastIndex)
+
           try {
             const data = JSON.parse(chunk)
             updateChat(
@@ -129,8 +148,14 @@ async function onConversation() {
                 inversion: false,
                 error: false,
                 loading: true,
-                conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
-                requestOptions: { prompt: message, options: { ...options } },
+                conversationOptions: {
+                  conversationId: data.conversationId,
+                  parentMessageId: data.id,
+                },
+                requestOptions: {
+                  prompt: message,
+                  options: { ...options },
+                },
               },
             )
 
@@ -193,7 +218,10 @@ async function onConversation() {
         error: true,
         loading: false,
         conversationOptions: null,
-        requestOptions: { prompt: message, options: { ...options } },
+        requestOptions: {
+          prompt: message,
+          options: { ...options },
+        },
       },
     )
     scrollToBottomIfAtBottom()
@@ -230,7 +258,10 @@ async function onRegenerate(index: number) {
       error: false,
       loading: true,
       conversationOptions: null,
-      requestOptions: { prompt: message, options: { ...options } },
+      requestOptions: {
+        prompt: message,
+        options: { ...options },
+      },
     },
   )
 
@@ -249,6 +280,7 @@ async function onRegenerate(index: number) {
           let chunk = responseText
           if (lastIndex !== -1)
             chunk = responseText.substring(lastIndex)
+
           try {
             const data = JSON.parse(chunk)
             updateChat(
@@ -260,8 +292,14 @@ async function onRegenerate(index: number) {
                 inversion: false,
                 error: false,
                 loading: true,
-                conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
-                requestOptions: { prompt: message, options: { ...options } },
+                conversationOptions: {
+                  conversationId: data.conversationId,
+                  parentMessageId: data.id,
+                },
+                requestOptions: {
+                  prompt: message,
+                  options: { ...options },
+                },
               },
             )
 
@@ -305,7 +343,10 @@ async function onRegenerate(index: number) {
         error: true,
         loading: false,
         conversationOptions: null,
-        requestOptions: { prompt: message, options: { ...options } },
+        requestOptions: {
+          prompt: message,
+          options: { ...options },
+        },
       },
     )
   }
@@ -334,6 +375,7 @@ function handleExport() {
         tempLink.setAttribute('download', 'chat-shot.png')
         if (typeof tempLink.download === 'undefined')
           tempLink.setAttribute('target', '_blank')
+
         document.body.appendChild(tempLink)
         tempLink.click()
         document.body.removeChild(tempLink)
@@ -409,7 +451,9 @@ function handleStop() {
 // 理想状态下其实应该是key作为索引项,但官方的renderOption会出现问题，所以就需要value反renderLabel实现
 const searchOptions = computed(() => {
   if (prompt.value.startsWith('/')) {
-    return promptTemplate.value.filter((item: { key: string }) => item.key.toLowerCase().includes(prompt.value.substring(1).toLowerCase())).map((obj: { value: any }) => {
+    return promptTemplate.value.filter((item: {
+      key: string
+    }) => item.key.toLowerCase().includes(prompt.value.substring(1).toLowerCase())).map((obj: { value: any }) => {
       return {
         label: obj.value,
         value: obj.value,
@@ -433,6 +477,7 @@ const renderOption = (option: { label: string }) => {
 const placeholder = computed(() => {
   if (isMobile.value)
     return t('chat.placeholderMobile')
+
   return t('chat.placeholder')
 })
 
@@ -444,6 +489,7 @@ const footerClass = computed(() => {
   let classes = ['p-4']
   if (isMobile.value)
     classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pr-3', 'overflow-hidden']
+
   return classes
 })
 
@@ -470,14 +516,14 @@ onUnmounted(() => {
     <main class="flex-1 overflow-hidden">
       <div id="scrollRef" ref="scrollRef" class="h-full overflow-hidden overflow-y-auto">
         <div
-          class="w-full max-w-screen-xl m-auto dark:bg-[#101014]"
           :class="[isMobile ? 'p-2' : 'p-4']"
+          class="w-full max-w-screen-xl m-auto dark:bg-[#101014]"
         >
           <div id="image-wrapper" class="relative">
             <template v-if="!dataSources.length">
-              <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
-                <SvgIcon icon="ri:bubble-chart-fill" class="mr-2 text-3xl" />
-                <span>{{ t('chat.newChatTitle') }}</span>
+              <div class="flex items-center justify-center mt-4 text-center text-neutral-500">
+                <SvgIcon class="mr-2 text-cyan-500 text-8xl" icon="ri:bubble-chart-fill" />
+                <span class="mr-2 text-sky-950 text-3xl">{{ t('chat.newChatTitle') }}</span>
               </div>
             </template>
             <template v-else>
@@ -486,12 +532,12 @@ onUnmounted(() => {
                   v-for="(item, index) of dataSources"
                   :key="index"
                   :date-time="item.dateTime"
-                  :text="item.text"
-                  :inversion="item.inversion"
                   :error="item.error"
+                  :inversion="item.inversion"
                   :loading="item.loading"
-                  @regenerate="onRegenerate(index)"
+                  :text="item.text"
                   @delete="handleDelete(index)"
+                  @regenerate="onRegenerate(index)"
                 />
                 <div class="sticky bottom-0 left-0 flex justify-center">
                   <NButton v-if="loading" type="warning" @click="handleStop">
@@ -521,7 +567,7 @@ onUnmounted(() => {
             </span>
           </HoverButton>
           <HoverButton @click="toggleUsingContext">
-            <span class="text-xl" :class="{ 'text-[#4b9e5f]': usingContext, 'text-[#a8071a]': !usingContext }">
+            <span :class="{ 'text-[#4b9e5f]': usingContext, 'text-[#a8071a]': !usingContext }" class="text-xl">
               <SvgIcon icon="ri:chat-history-line" />
             </span>
           </HoverButton>
@@ -530,17 +576,17 @@ onUnmounted(() => {
               <NInput
                 ref="inputRef"
                 v-model:value="prompt"
-                type="textarea"
-                :placeholder="placeholder"
                 :autosize="{ minRows: 1, maxRows: isMobile ? 4 : 8 }"
-                @input="handleInput"
-                @focus="handleFocus"
+                :placeholder="placeholder"
+                type="textarea"
                 @blur="handleBlur"
+                @focus="handleFocus"
+                @input="handleInput"
                 @keypress="handleEnter"
               />
             </template>
           </NAutoComplete>
-          <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
+          <NButton :disabled="buttonDisabled" type="primary" @click="handleSubmit">
             <template #icon>
               <span class="dark:text-black">
                 <SvgIcon icon="ri:send-plane-fill" />

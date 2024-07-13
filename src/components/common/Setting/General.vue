@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { NButton, NInput, NPopconfirm, useMessage } from 'naive-ui'
+import { NButton, NInput, NPopconfirm, NSelect, useMessage } from 'naive-ui'
 import { computed, ref } from 'vue'
 import { SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
 import { useAppStore, useUserStore } from '@/store'
-import type { Language, Theme } from '@/store/modules/app/helper'
+import type { Theme } from '@/store/modules/app/helper'
 import type { UserInfo } from '@/store/modules/user/helper'
 import { getCurrentDate } from '@/utils/functions'
 
@@ -20,20 +20,7 @@ const theme = computed(() => appStore.theme)
 
 const userInfo = computed(() => userStore.userInfo)
 
-const avatar = ref(userInfo.value.avatar ?? '')
-
 const name = ref(userInfo.value.name ?? '')
-
-const description = ref(userInfo.value.description ?? '')
-
-const language = computed({
-  get() {
-    return appStore.language
-  },
-  set(value: Language) {
-    appStore.setLanguage(value)
-  },
-})
 
 const themeOptions: { label: string; key: Theme; icon: string }[] = [
   {
@@ -50,44 +37,6 @@ const themeOptions: { label: string; key: Theme; icon: string }[] = [
     label: 'Dark',
     key: 'dark',
     icon: 'ri:moon-foggy-line',
-  },
-]
-
-const languageOptions: { label: string; key: Language; value: Language }[] = [
-  {
-    label: 'English',
-    key: 'en-US',
-    value: 'en-US',
-  },
-  {
-    label: 'Español',
-    key: 'es-ES',
-    value: 'es-ES',
-  },
-  {
-    label: '한국어',
-    key: 'ko-KR',
-    value: 'ko-KR',
-  },
-  {
-    label: 'Русский язык',
-    key: 'ru-RU',
-    value: 'ru-RU',
-  },
-  {
-    label: 'Tiếng Việt',
-    key: 'vi-VN',
-    value: 'vi-VN',
-  },
-  {
-    label: '简体中文',
-    key: 'zh-CN',
-    value: 'zh-CN',
-  },
-  {
-    label: '繁體中文',
-    key: 'zh-TW',
-    value: 'zh-TW',
   },
 ]
 
@@ -150,20 +99,192 @@ function handleImportButtonClick(): void {
   if (fileInput)
     fileInput.click()
 }
+
+const provinces = [
+  {
+    label: '北京市',
+    key: 'Beijing',
+    value: 'Beijing',
+  },
+  {
+    label: '天津市',
+    key: 'Tianjin',
+    value: 'Tianjin',
+  },
+  {
+    label: '河北省',
+    key: 'Hebei',
+    value: 'Hebei',
+  },
+  {
+    label: '山西省',
+    key: 'Shanxi',
+    value: 'Shanxi',
+  },
+  {
+    label: '内蒙古自治区',
+    key: 'Neimenggu',
+    value: 'Neimenggu',
+  },
+  {
+    label: '辽宁省',
+    key: 'Liaoning',
+    value: 'Liaoning',
+  },
+  {
+    label: '吉林省',
+    key: 'Jilin',
+    value: 'Jilin',
+  },
+  {
+    label: '黑龙江省',
+    key: 'Heilongjiang',
+    value: 'Heilongjiang',
+  },
+  {
+    label: '上海市',
+    key: 'Shanghai',
+    value: 'Shanghai',
+  },
+  {
+    label: '江苏省',
+    key: 'Jiangsu',
+    value: 'Jiangsu',
+  },
+  {
+    label: '浙江省',
+    key: 'Zhejiang',
+    value: 'Zhejiang',
+  },
+  {
+    label: '安徽省',
+    key: 'Anhui',
+    value: 'Anhui',
+  },
+  {
+    label: '福建省',
+    key: 'Fujian',
+    value: 'Fujian',
+  },
+  {
+    label: '江西省',
+    key: 'Jiangxi',
+    value: 'Jiangxi',
+  },
+  {
+    label: '山东省',
+    key: 'Shandong',
+    value: 'Shandong',
+  },
+  {
+    label: '河南省',
+    key: 'Henan',
+    value: 'Henan',
+  },
+  {
+    label: '湖北省',
+    key: 'Hubei',
+    value: 'Hubei',
+  },
+  {
+    label: '湖南省',
+    key: 'Hunan',
+    value: 'Hunan',
+  },
+  {
+    label: '广东省',
+    key: 'Guangdong',
+    value: 'Guangdong',
+  },
+  {
+    label: '广西壮族自治区',
+    key: 'Guangxi',
+    value: 'Guangxi',
+  },
+  {
+    label: '海南省',
+    key: 'Hainan',
+    value: 'Hainan',
+  },
+  {
+    label: '重庆市',
+    key: 'Chongqing',
+    value: 'Chongqing',
+  },
+  {
+    label: '四川省',
+    key: 'Sichuan',
+    value: 'Sichuan',
+  },
+  {
+    label: '贵州省',
+    key: 'Guizhou',
+    value: 'Guizhou',
+  },
+  {
+    label: '云南省',
+    key: 'Yunnan',
+    value: 'Yunnan',
+  },
+  {
+    label: '西藏自治区',
+    key: 'Xizang',
+    value: 'Xizang',
+  },
+  {
+    label: '陕西省',
+    key: 'Shaanxi',
+    value: 'Shaanxi',
+  },
+  {
+    label: '甘肃省',
+    key: 'Gansu',
+    value: 'Gansu',
+  },
+  {
+    label: '青海省',
+    key: 'Qinghai',
+    value: 'Qinghai',
+  },
+  {
+    label: '宁夏回族自治区',
+    key: 'Ningxia',
+    value: 'Ningxia',
+  },
+  {
+    label: '新疆维吾尔自治区',
+    key: 'Xinjiang',
+    value: 'Xinjiang',
+  },
+]
+
+const onlyAllowNumber = (value: string) => !value || /^\d+$/.test(value)
+
+const selectedProvince = ref('')
+const firstNumber = ref('')
+const secondNumber = ref('')
+
+// const description = ref(userInfo.value.description ?? '')
+const description = computed(() => {
+  // selectedProvince.value 映射到 label
+  let province = ''
+  provinces.forEach((p) => {
+    if (p.value === selectedProvince.value)
+      province = p.label
+  })
+  const score = firstNumber.value || ''
+  const rank = secondNumber.value || ''
+  return `${province}, ${score}, ${rank}`
+})
+
+const isFormComplete = computed(() => {
+  return selectedProvince.value && firstNumber.value && secondNumber.value
+})
 </script>
 
 <template>
   <div class="p-4 space-y-5 min-h-[200px]">
     <div class="space-y-6">
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.avatarLink') }}</span>
-        <div class="flex-1">
-          <NInput v-model:value="avatar" placeholder="" />
-        </div>
-        <NButton size="tiny" text type="primary" @click="updateUserInfo({ avatar })">
-          {{ $t('common.save') }}
-        </NButton>
-      </div>
       <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.name') }}</span>
         <div class="w-[200px]">
@@ -176,9 +297,28 @@ function handleImportButtonClick(): void {
       <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.description') }}</span>
         <div class="flex-1">
-          <NInput v-model:value="description" placeholder="" />
+          <div class="flex flex-wrap">
+            <NSelect
+              v-model:value="selectedProvince"
+              :options="provinces"
+              placeholder="省份"
+              style="width: 40%; margin-right: 10px;"
+            />
+            <NInput
+              v-model:value="firstNumber"
+              :allow-input="onlyAllowNumber"
+              placeholder="分数"
+              style="width: 25%; margin-right: 10px;"
+            />
+            <NInput
+              v-model:value="secondNumber"
+              :allow-input="onlyAllowNumber"
+              placeholder="位次"
+              style="width: 25%;"
+            />
+          </div>
         </div>
-        <NButton size="tiny" text type="primary" @click="updateUserInfo({ description })">
+        <NButton :disabled="!isFormComplete" size="tiny" text type="primary" @click="updateUserInfo({ description })">
           {{ $t('common.save') }}
         </NButton>
       </div>
