@@ -8,11 +8,8 @@ import viVN from './vi-VN'
 import zhCN from './zh-CN'
 import zhTW from './zh-TW'
 import type { Language } from '@/store/modules/app/helper'
-import { useAppStoreWithOut } from '@/store/modules/app'
 
-const appStore = useAppStoreWithOut()
-
-const defaultLocale = appStore.language || 'zh-CN'
+const defaultLocale = 'zh-CN'
 
 const i18n = createI18n({
   locale: defaultLocale,
@@ -32,7 +29,7 @@ const i18n = createI18n({
 export const t = i18n.global.t
 
 export function setLocale(locale: Language) {
-  i18n.global.locale = locale
+  i18n.global.locale = 'zh-CN'
 }
 
 export function setupI18n(app: App) {
