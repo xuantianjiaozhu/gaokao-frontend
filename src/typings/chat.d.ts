@@ -43,4 +43,9 @@ declare namespace Chat {
 		role: string
 		text: string
 	}
+
+  interface LlmMessage {
+    role: 'user' | 'assistant'
+    content: string
+  }
 }

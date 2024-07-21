@@ -65,6 +65,22 @@ function handleSubmit() {
   onConversation()
 }
 
+function getHistoryMessages() {
+  const chatJson: string = localStorage.getItem('chatStorage') || '{}'
+  const data = JSON.parse(chatJson)
+  const messages: Chat.LlmMessage[] = []
+  if (data.data?.chat) {
+    data.data.chat.forEach((chatItem: any) => {
+      chatItem.data.forEach((messageItem: any) => {
+        const role = messageItem.inversion ? 'user' : 'assistant'
+        const content: string = messageItem.text
+        messages.push({ role, content })
+      })
+    })
+  }
+  return messages.slice(-6, -2)
+}
+
 async function onConversation() {
   const promptMessage = prompt.value
 
@@ -123,7 +139,7 @@ async function onConversation() {
   fetch('/api/start-chat-session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ uuid, prompt: promptMessage }),
+    body: JSON.stringify({ uuid, prompt: promptMessage, historyMessages: getHistoryMessages() }),
   })
     .then(response => response.json())
     .then((data) => {
