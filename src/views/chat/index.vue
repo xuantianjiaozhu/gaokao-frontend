@@ -14,7 +14,6 @@ import { useChatStore, usePromptStore } from '@/store'
 import { t } from '@/locales'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { HoverButton, SvgIcon } from '@/components/common'
-import { fetchChatAPIProcess } from '@/api'
 
 let controller = new AbortController()
 
@@ -86,65 +85,17 @@ function getHistoryMessages(uuid: number) {
   return messages.slice(-6, -2)
 }
 
-async function onConversation() {
-  const promptMessage = prompt.value
-
-  if (loading.value)
-    return
-
-  if (!promptMessage || promptMessage.trim() === '')
-    return
-
-  controller = new AbortController()
-
-  addChat(
-    +uuid,
-    {
-      dateTime: new Date().toLocaleString(),
-      text: promptMessage,
-      inversion: true,
-      error: false,
-      conversationOptions: null,
-      requestOptions: {
-        prompt: promptMessage,
-        options: null,
-      },
-    },
-  )
-  scrollToBottom()
-
-  loading.value = true
-  prompt.value = ''
-
-  let options: Chat.ConversationRequest = {}
-  const lastContext = conversationList.value[conversationList.value.length - 1]?.conversationOptions
-
-  if (lastContext && usingContext.value)
-    options = { ...lastContext }
-
-  addChat(
-    +uuid,
-    {
-      dateTime: new Date().toLocaleString(),
-      text: t('chat.thinking'),
-      loading: true,
-      inversion: false,
-      error: false,
-      conversationOptions: null,
-      requestOptions: {
-        prompt: promptMessage,
-        options: { ...options },
-      },
-    },
-  )
-  scrollToBottom()
-
+function fetchLlmResponse(promptMessage: string, options: Chat.ConversationRequest) {
   let currentText = ''
 
   fetch('/api/start-chat-session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ uuid, prompt: promptMessage, historyMessages: getHistoryMessages(+uuid) }),
+    body: JSON.stringify({
+      uuid,
+      prompt: promptMessage,
+      historyMessages: getHistoryMessages(+uuid),
+    }),
   })
     .then((response) => {
       if (!response.ok)
@@ -205,7 +156,7 @@ async function onConversation() {
       }
     },
     )
-    .catch ((error: any) => {
+    .catch((error: any) => {
       const errorMessage = error?.message ?? t('common.wrong')
 
       if (error.message === 'canceled') {
@@ -256,6 +207,62 @@ async function onConversation() {
     .finally(() => loading.value = false)
 }
 
+async function onConversation() {
+  const promptMessage = prompt.value
+
+  if (loading.value)
+    return
+
+  if (!promptMessage || promptMessage.trim() === '')
+    return
+
+  controller = new AbortController()
+
+  addChat(
+    +uuid,
+    {
+      dateTime: new Date().toLocaleString(),
+      text: promptMessage,
+      inversion: true,
+      error: false,
+      conversationOptions: null,
+      requestOptions: {
+        prompt: promptMessage,
+        options: null,
+      },
+    },
+  )
+  scrollToBottom()
+
+  loading.value = true
+  prompt.value = ''
+
+  let options: Chat.ConversationRequest = {}
+  const lastContext = conversationList.value[conversationList.value.length - 1]?.conversationOptions
+
+  if (lastContext && usingContext.value)
+    options = { ...lastContext }
+
+  addChat(
+    +uuid,
+    {
+      dateTime: new Date().toLocaleString(),
+      text: t('chat.thinking'),
+      loading: true,
+      inversion: false,
+      error: false,
+      conversationOptions: null,
+      requestOptions: {
+        prompt: promptMessage,
+        options: { ...options },
+      },
+    },
+  )
+  scrollToBottom()
+
+  fetchLlmResponse(promptMessage, options)
+}
+
 async function onRegenerate(index: number) {
   if (loading.value)
     return
@@ -278,7 +285,7 @@ async function onRegenerate(index: number) {
     index,
     {
       dateTime: new Date().toLocaleString(),
-      text: '',
+      text: t('chat.thinking'),
       inversion: false,
       error: false,
       loading: true,
@@ -290,49 +297,7 @@ async function onRegenerate(index: number) {
     },
   )
 
-  try {
-    const fetchChatAPIOnce = async () => {
-      await fetchChatAPIProcess<Chat.ConversationResponse>({
-        prompt: message,
-      })
-      updateChatSome(+uuid, index, { loading: false })
-    }
-    await fetchChatAPIOnce()
-  }
-  catch (error: any) {
-    if (error.message === 'canceled') {
-      updateChatSome(
-        +uuid,
-        index,
-        {
-          loading: false,
-        },
-      )
-      return
-    }
-
-    const errorMessage = error?.message ?? t('common.wrong')
-
-    updateChat(
-      +uuid,
-      index,
-      {
-        dateTime: new Date().toLocaleString(),
-        text: errorMessage,
-        inversion: false,
-        error: true,
-        loading: false,
-        conversationOptions: null,
-        requestOptions: {
-          prompt: message,
-          options: { ...options },
-        },
-      },
-    )
-  }
-  finally {
-    loading.value = false
-  }
+  fetchLlmResponse(message, options)
 }
 
 function handleExport() {
