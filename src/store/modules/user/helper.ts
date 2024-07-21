@@ -15,7 +15,7 @@ export function defaultSetting(): UserState {
   return {
     userInfo: {
       name: 'test',
-      description: '省份、高考分数、位次',
+      description: '省份、文理、分数、位次',
     },
   }
 }

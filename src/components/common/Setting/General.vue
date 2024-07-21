@@ -8,7 +8,7 @@ import { useAppStore, useUserStore } from '@/store'
 import type { Theme } from '@/store/modules/app/helper'
 import type { UserInfo } from '@/store/modules/user/helper'
 import { getCurrentDate } from '@/utils/functions'
-import { provinces } from '@/utils/dict/provinces'
+import { provinces, wenlis } from '@/utils/dict'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
@@ -104,6 +104,7 @@ function handleImportButtonClick(): void {
 const onlyAllowNumber = (value: string) => !value || /^\d+$/.test(value)
 
 const selectedProvince = ref('')
+const selectedWenli = ref('')
 const firstNumber = ref('')
 const secondNumber = ref('')
 
@@ -114,28 +115,36 @@ const description = computed(() => {
     if (p.value === selectedProvince.value)
       province = p.label
   })
-  if (province.length === 6)
+  if (province.length === 4 || province.length === 6)
     province = province.substring(0, 3)
-  else if (province.length >= 7)
+  else
     province = province.substring(0, 2)
 
+  let wenli = ''
+  wenlis.forEach((wl) => {
+    if (wl.value === selectedWenli.value)
+      wenli = wl.label.at(0) || ''
+  })
   const score = firstNumber.value || ''
   const rank = secondNumber.value || ''
-  return `${province}, ${score}, ${rank}`
+  return `${province}, ${wenli}, ${score}, ${rank}`
 })
 
 const parseDescription = (description: string) => {
   const parts = description.split(', ').map(part => part.trim())
-  if (parts.length === 3) {
-    const [provinceLabel, score, rank] = parts
+  if (parts.length === 4) {
+    const [provinceLabel, wenliLable, score, rank] = parts
 
     // Find the province value by label
     const foundProvince = provinces.find(p =>
       p.label.startsWith(provinceLabel), // As we truncated the label in description
     )
+    const foundWenli = wenlis.find(wl => wl.label === wenliLable)
 
     if (foundProvince)
       selectedProvince.value = foundProvince.value
+    if (foundWenli)
+      selectedWenli.value = foundWenli.value
 
     firstNumber.value = score
     secondNumber.value = rank
@@ -152,7 +161,7 @@ onMounted(() => {
 })
 
 const isFormComplete = computed(() => {
-  return selectedProvince.value && firstNumber.value && secondNumber.value
+  return selectedProvince.value && selectedWenli.value && firstNumber.value && secondNumber.value
 })
 </script>
 
@@ -176,19 +185,25 @@ const isFormComplete = computed(() => {
               v-model:value="selectedProvince"
               :options="provinces"
               placeholder="省份"
-              style="width: 40%; margin-right: 10px;"
+              style="width: 35%; margin-right: 10px;"
+            />
+            <NSelect
+              v-model:value="selectedWenli"
+              :options="wenlis"
+              placeholder="文理"
+              style="width: 20%; margin-right: 10px;"
             />
             <NInput
               v-model:value="firstNumber"
               :allow-input="onlyAllowNumber"
               placeholder="分数"
-              style="width: 25%; margin-right: 10px;"
+              style="width: 20%; margin-right: 10px;"
             />
             <NInput
               v-model:value="secondNumber"
               :allow-input="onlyAllowNumber"
               placeholder="位次"
-              style="width: 25%;"
+              style="width: 20%;"
             />
           </div>
         </div>

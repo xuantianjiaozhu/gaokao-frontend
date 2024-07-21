@@ -155,3 +155,16 @@ export const provinces = [
     value: 'Xinjiang',
   },
 ]
+
+export const wenlis = [
+  {
+    label: '文科',
+    key: 'wen',
+    value: 'wen',
+  },
+  {
+    label: '理科',
+    key: 'li',
+    value: 'li',
+  },
+]
