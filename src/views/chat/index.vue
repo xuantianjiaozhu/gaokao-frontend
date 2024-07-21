@@ -141,7 +141,11 @@ async function onConversation() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ uuid, prompt: promptMessage, historyMessages: getHistoryMessages() }),
   })
-    .then(response => response.json())
+    .then((response) => {
+      if (!response.ok)
+        return response.json().then(data => Promise.reject(data))
+      return response.json()
+    })
     .then((data) => {
       const eventSource = new EventSource(`/api/chat-process?uuid=${+uuid}`)
       eventSource.onmessage = function (event) {
@@ -174,8 +178,24 @@ async function onConversation() {
         }
         updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
       }
-      eventSource.onerror = function (event) {
-        console.error('Error:', event)
+      eventSource.onerror = function () {
+        updateChat(
+          +uuid,
+          dataSources.value.length - 1,
+          {
+            dateTime: new Date().toLocaleString(),
+            text: '服务器错误，请重试。',
+            inversion: false,
+            error: true,
+            loading: false,
+            conversationOptions: null,
+            requestOptions: {
+              prompt: promptMessage,
+              options: { ...options },
+            },
+          },
+        )
+        scrollToBottomIfAtBottom()
         eventSource.close()
       }
     },
