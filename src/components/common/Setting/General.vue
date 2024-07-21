@@ -139,7 +139,7 @@ const parseDescription = (description: string) => {
     const foundProvince = provinces.find(p =>
       p.label.startsWith(provinceLabel), // As we truncated the label in description
     )
-    const foundWenli = wenlis.find(wl => wl.label === wenliLable)
+    const foundWenli = wenlis.find(wl => wl.label.startsWith(wenliLable))
 
     if (foundProvince)
       selectedProvince.value = foundProvince.value

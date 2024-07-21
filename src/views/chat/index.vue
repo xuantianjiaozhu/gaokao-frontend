@@ -10,7 +10,8 @@ import HeaderComponent from './components/Header/index.vue'
 import { useChat } from './hooks/useChat'
 import { useScroll } from './hooks/useScroll'
 import { useUsingContext } from './hooks/useUsingContext'
-import { useChatStore, usePromptStore } from '@/store'
+import { provinces, wenlis } from '@/utils/dict'
+import { useChatStore, usePromptStore, useUserStore } from '@/store'
 import { t } from '@/locales'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { HoverButton, SvgIcon } from '@/components/common'
@@ -22,6 +23,8 @@ const dialog = useDialog()
 const ms = useMessage()
 
 const chatStore = useChatStore()
+const userStore = useUserStore()
+const userInfo = computed(() => userStore.userInfo)
 
 const { isMobile } = useBasicLayout()
 const {
@@ -85,8 +88,30 @@ function getHistoryMessages(uuid: number) {
   return messages.slice(-6, -2)
 }
 
+function parseDescription(description: string) {
+  const parts = description.split(', ').map(part => part.trim())
+  if (parts.length === 4) {
+    const [provinceLabel, wenliLable, score, rank] = parts
+
+    // Find the province value by label
+    const foundProvince = provinces.find(p =>
+      p.label.startsWith(provinceLabel), // As we truncated the label in description
+    )
+    const foundWenli = wenlis.find(wl => wl.label.startsWith(wenliLable))
+
+    return {
+      province: foundProvince?.label,
+      wenli: foundWenli?.label,
+      score,
+      rank,
+    }
+  }
+  return {}
+}
+
 function fetchLlmResponse(promptMessage: string, options: Chat.ConversationRequest) {
   let currentText = ''
+  const { province, wenli, score, rank } = parseDescription(userInfo.value.description || '')
 
   fetch('/api/start-chat-session', {
     method: 'POST',
@@ -95,6 +120,10 @@ function fetchLlmResponse(promptMessage: string, options: Chat.ConversationReque
       uuid,
       prompt: promptMessage,
       historyMessages: getHistoryMessages(+uuid),
+      province,
+      wenli,
+      score,
+      rank,
     }),
   })
     .then((response) => {
